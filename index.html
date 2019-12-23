@@ -1,23 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8"/>
 
-    <title>Setting</title>
+        <meta charset="utf-8" />
 
+        <title>TalkingRoomDemo</title>
+
+        <link href="bootstrap.css" rel="stylesheet">
+
+	<style>
+		body {
+			padding:20px;
+		}
+		#console {
+			height: 400px;
+			overflow: auto;
+		}
+		.username-msg {color:orange;}
+		.connect-msg {color:green;}
+		.disconnect-msg {color:red;}
+		.send-msg {color:#888}
+	</style>
+
+
+	<script src="js/socket.io/socket.io.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/jquery-1.10.1.min.js"></script>
+
+	<script>
+		//window.location.href='android://setting';
+        var userName = 'user' + Math.floor((Math.random()*1000)+1);
+
+		var socket =  io.connect('http://localhost:9092');
+
+		socket.on('connect', function() {
+			output('<span class="connect-msg">Client('+userName+') has connected to the server!</span>');
+			window.location.href='android://setting';
+		});
+
+		socket.on('chatevent', function(data) {
+			output('<span class="username-msg">' + data.userName + ':</span> ' + data.message);
+		});
+
+		socket.on('disconnect', function() {
+			output('<span class="disconnect-msg">The Client('+userName+') has disconnected!</span>');
+		});
+
+                function sendDisconnect() {
+                        socket.disconnect();
+                }
+
+		function sendMessage() {
+                        var message = $('#msg').val();
+                        $('#msg').val('');
+
+                        var jsonObject = {userName: userName,
+                                          message: message};
+                        socket.emit('chatevent', jsonObject);
+		}
+
+		function output(message) {
+                        var currentTime = "<span class='time'>" +  moment().format('HH:mm:ss.SSS') + "</span>";
+                        var element = $("<div>" + currentTime + " " + message + "</div>");
+			$('#console').prepend(element);
+		}
+
+        $(document).keydown(function(e){
+            if(e.keyCode == 13) {
+                $('#send').click();
+            }
+        });
+	</script>
 </head>
 
 <body>
-<h>Hello , everyone !</h>
-<br/>
-<img src="timg.jpg" alt="11月28日要到了吧" width="600" height="442"/><br/>
-<a href="android://setting">Setting</a><br/>
-<script language="javascript" type="text/javascript"> 
- window.location.href='android://setting';
-</script>
+
+	<h1>Talking Room</h1>
+
+	<br/>
+
+	<div id="console" class="well">
+	</div>
+
+        <form class="well form-inline" onsubmit="return false;">
+           <input id="msg" class="input-xlarge" type="text" placeholder="Type something..."/>
+           <button type="button" onClick="sendMessage()" class="btn" id="send">Send</button>
+           <button type="button" onClick="sendDisconnect()" class="btn">Disconnect</button>
+        </form>
+
 
 
 </body>
-   
-</html>
 
+</html>

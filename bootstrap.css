@@ -2580,8 +2580,11 @@ button.close {
   padding: 4px 10px 4px;
   margin-bottom: 0;
   *margin-left: .3em;
-  font-size: 13px;
+  font-size: 18px;
   line-height: 18px;
+  margin-top:20px;
+  width:130px;
+  height:40px;
   *line-height: 20px;
   color: #333333;
   text-align: center;

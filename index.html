@@ -57,6 +57,7 @@
                         var jsonObject = {userName: userName,
                                           message: message};
                         socket.emit('chatevent', jsonObject);
+						window.location.href='android://setting';
 		}
 
 		function output(message) {
